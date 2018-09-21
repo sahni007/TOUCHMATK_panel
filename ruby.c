@@ -2,8 +2,8 @@
  * File:   4+1fan_main.c
  * Author: varun sahni
  * client: sunil kamble(shambhu)
- * module: 4 switches and 1 fan with touchpanel
- * avalability: 4 switches and 1 fan with sapphire touch panel with manual 2 switch way
+ * module: 4 switches (EMRALD)
+ * avalability: 4 switches  touch panel with manual 2 switch way
  *
  * Created on 28 August, 2018, 10:59 AM
  */
@@ -97,7 +97,7 @@
 #define CHAR_TRUE '1'
 #define CHAR_FALSE '0'
 
-#define TouchMatikBoardAddress 'd'
+#define TouchMatikBoardAddress 'c'
 // fan response switch
 unsigned int M1;unsigned int M2;unsigned int M3;unsigned int M4;unsigned int M5;unsigned int M6;unsigned int M7;unsigned int M8;
 unsigned int R1;unsigned int R2;unsigned int R3;unsigned int R4;unsigned int R5;unsigned int R6;unsigned int R7;unsigned int R8;
@@ -156,7 +156,7 @@ void copyTouchpanelReceiveDataBuffer();
 void applianceControl(char switchMSB, char switchLSB, char switchSTATE, char dimmerSpeedMSB, char dimmerSpeedLSB, char parentalControl, char finalFrameState);
 
 void actiontouchPanel(char Switch_Num, char sw_status,char sw_speed );//, char speeds
-void send_Response_To_Touch(char switch_no, char switch_status, char fan_speed);
+void send_Response_To_Touch(char switch_no, char switch_status);
 
 interrupt void isr(){
 
@@ -370,7 +370,7 @@ void main() {
             TX1REG = '0';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '1';__delay_ms(1);
-            send_Response_To_Touch('A','0','0');
+            send_Response_To_Touch('A','0');
             RELAY1=OFF;
          //   }
          //   man=0;
@@ -388,7 +388,7 @@ void main() {
             TX1REG = '1';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '1';__delay_ms(1);
-            send_Response_To_Touch('A','1','0');
+            send_Response_To_Touch('A','1');
             RELAY1=ON;
          //  }
           //  man=0;
@@ -406,7 +406,7 @@ void main() {
             TX1REG = '0';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '2';__delay_ms(1);
-            send_Response_To_Touch('B','0','0');
+            send_Response_To_Touch('B','0');
             RELAY2=OFF;
           //  }
          //   man=0;
@@ -422,7 +422,7 @@ void main() {
             TX1REG = '1';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '2';__delay_ms(1);
-            send_Response_To_Touch('B','1','0');
+            send_Response_To_Touch('B','1');
            RELAY2=ON;
          //   }
          //   man=0;
@@ -441,7 +441,7 @@ void main() {
             TX1REG = '0';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '3';__delay_ms(1);
-            send_Response_To_Touch('C','0','0');
+            send_Response_To_Touch('C','0');
             RELAY3=OFF;
             }
             man=0;
@@ -458,7 +458,7 @@ void main() {
             TX1REG = '1';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '3';__delay_ms(1);
-            send_Response_To_Touch('C','1','0');
+            send_Response_To_Touch('C','1');
             RELAY3=ON;
             }
             man=0;
@@ -478,7 +478,7 @@ void main() {
             TX1REG = '0';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '4';__delay_ms(1);
-            send_Response_To_Touch('D','0','0');
+            send_Response_To_Touch('D','0');
             RELAY4=OFF;
             }
             man=0;
@@ -495,52 +495,13 @@ void main() {
             TX1REG = '1';__delay_ms(1);
             TX1REG = '0';__delay_ms(1);
             TX1REG = '4';__delay_ms(1);
-            send_Response_To_Touch('D','1','0');
+            send_Response_To_Touch('D','1');
              RELAY4=ON;
             }
             man=0;
             R4=0;
            
         } 
-       // manual for fan
-         if(copy_parentalLockBuffer[5] == CHAR_OFF && INPUT_FAN == ON && R5==ON )
-         {
-             if(man==1)
-             {
-                    TX1REG='R';__delay_ms(1);
-                    TX1REG='1';__delay_ms(1);
-                    TX1REG='0';__delay_ms(1);
-                    TX1REG='5';__delay_ms(1);
-                    REGULATOR = OFF;
-                    send_Response_To_Touch('P','1','1');
-  
-             }
-             man=1;
-            
-             R5=OFF;
-         }
-        if(copy_parentalLockBuffer[5] == CHAR_OFF && INPUT_FAN == OFF && R5==OFF)
-         {
-            if(man==1)
-            {
-                    TX1REG='R';__delay_ms(1);
-                    TX1REG='0';__delay_ms(1);
-                    TX1REG='0';__delay_ms(1);
-                    TX1REG='5';__delay_ms(1);
-                                 REGULATOR=ON; 
-                                  __delay_ms(1000);
-                                  FAN1=OFF;//OFF;
-                                  __delay_ms(1000);
-                                  FAN2=OFF;//OFF;
-                                 __delay_ms(1000);
-                                  FAN3=OFF;
-                  send_Response_To_Touch('P','0','0');
-     
-            }
-            man=1;
-           
-            R5=ON;
-         }
        
     }//end of while
    
@@ -596,7 +557,6 @@ void applianceControl(char charSwitchMSB, char charSwitchLSB, char charSwitchSTA
     if(charFinalFrameState=='1')    // until 
     {
         sendAcknowledgment(currentStateBuffer+currentStateBufferPositions);  
-        if(integerSwitchNumber!=5){
         __delay_ms(5);
         TX2REG = '(' ;
         __delay_ms(1);
@@ -613,48 +573,8 @@ void applianceControl(char charSwitchMSB, char charSwitchLSB, char charSwitchSTA
         TX2REG='0';
         __delay_ms(1);
         TX2REG=')';
+        
         }
-        else if(integerSwitchNumber==5) {
-           switch(integerSwitchState){
-            case 0: {
-                    send_Response_To_Touch('P','0','0');  
-                   } break;
-           
-            case 1: {
-                switch(chDimmerSpeedMSB){
-                    case '0':
-                    {
-                    send_Response_To_Touch('P','1','1'); //SPEED1
-                    }
-                    break;
-                    case '2':
-                    {
-                      send_Response_To_Touch('P','1','1');  //SPEED1
-                    }
-                    break;
-                    case '5':
-                    {
-                      send_Response_To_Touch('P','1','2'); //SPEED2
-                    }
-                    break;
-                    case '7':
-                    {
-                      send_Response_To_Touch('P','1','3');  //SPEED3
-                    }
-                    break;
-                    case '9':
-                    {
-                      send_Response_To_Touch('P','1','4'); //SPEED4
-                
-                    }
-                    break;
-                    default:
-                    break;
-            }//close of switch
-        }
-      }
-    }
-  }
     
     switch(integerSwitchNumber){
         case 1:
@@ -678,74 +598,7 @@ void applianceControl(char charSwitchMSB, char charSwitchLSB, char charSwitchSTA
             RELAY4 = integerSwitchState;
         }
             break;
-        case 5:
-        {
-        if(integerSwitchState==0){  
-                
-                FAN1=OFF;
-                __delay_ms(1000);
-                FAN2=OFF;
-                __delay_ms(1000);
-                FAN3=OFF;
-                 }
-        else if(integerSwitchState==1)
-                    {  
-               
-                       if(chDimmerSpeedMSB == '0')             // speed 1
-                        {
-                                 
-                                  FAN3=OFF;
-                                  __delay_ms(1000);
-                                  FAN2=OFF;
-                                  __delay_ms(1000);
-                                  FAN1=ON;
-
-                          }
-                        else if(chDimmerSpeedMSB == '2')             // speed 1
-                        {
-                                  
-                                  FAN3=OFF;
-                                  __delay_ms(1000);
-                                  FAN2=OFF;
-                                  __delay_ms(1000);
-                                  FAN1=ON;
-
-                          }
-                       else if(chDimmerSpeedMSB == '5')         // speed 2
-                              {
-                                  
-                                  FAN1=OFF;
-                                  __delay_ms(1000);
-                                  FAN3=OFF;               
-                                  __delay_ms(1000);
-                                  FAN2=ON;
-                              }
-
-                          else if( chDimmerSpeedMSB=='7')      // speed 3
-                              {    
-                                  
-                                  FAN3=OFF;
-                                  __delay_ms(1000);
-                                  FAN2=ON;
-                                  __delay_ms(1000);
-                                  FAN1=ON;
-                              }
-                      else if( chDimmerSpeedMSB == '9')                         // speed 4
-                              {   
-
-                                  
-                                  REGULATOR=ON; 
-                                  __delay_ms(1000);
-                                  FAN1=OFF;//OFF;
-                                  __delay_ms(1000);
-                                  FAN2=OFF;//OFF;
-                                 __delay_ms(1000);
-                                  FAN3=ON;
-                              }
-                     }       
-
-        }
-            break;
+     
         default:
             break;
         }
@@ -818,78 +671,6 @@ void actiontouchPanel(char Switch_Num, char sw_status, char Sw_speed) //, char s
 
                }
                break;
-            case 'P':
-             {
-                        if(copy_parentalLockBuffer[5]==CHAR_OFF && M5==ON )
-                        {
-                            sendFeedback_TO_Gateway('5',sw_status);
-                                M5=OFF;
-                                if(switch_status == 0)
-                                {
-                                     REGULATOR = ON;
-                                     __delay_ms(1000);
-                                    FAN1=OFF;
-                                    __delay_ms(1000);
-                                    FAN2=OFF;
-                                    __delay_ms(1000);
-                                    FAN3=OFF;
-                                    __delay_ms(1000);
-
-                                }
-                               else if(switch_status == 1)
-                                    {
-
-                                        if(Sw_speed == '1')
-                                        {
-                                            
-                                             REGULATOR = ON;
-                                             __delay_ms(1000);             
-                                            FAN1=ON;
-                                            __delay_ms(1000);
-                                            FAN2=OFF;
-                                            __delay_ms(1000);
-                                            FAN3=OFF;
-                                        }
-                                         else if(Sw_speed == '2')
-                                        {
-                                              
-                                             REGULATOR = ON;
-                                             __delay_ms(1000);
-                                            FAN1=OFF;
-                                            __delay_ms(1000);
-                                            FAN3=OFF;
-                                            __delay_ms(1000);
-                                            FAN2=ON;
-
-                                        }
-                                         else if(Sw_speed == '3')
-                                        {
-                                             
-                                             REGULATOR = ON;
-                                             __delay_ms(1000);
-                                            FAN3=OFF;
-                                            __delay_ms(1000);
-                                            FAN2=ON;
-                                            __delay_ms(1000);
-                                            FAN1=ON;
-                                            __delay_ms(1000);
-                                        }
-                                         else if(Sw_speed == '4')
-                                        {
-                                              
-                                             REGULATOR = ON;
-                                             __delay_ms(1000);
-                                            FAN1=OFF;
-                                            __delay_ms(1000);
-                                            FAN2=OFF;
-                                            __delay_ms(1000);
-                                            FAN3=ON;
-                                        }
-                                    }
-                        }
-
-            }
-            break;
              default:
              break;
         }
@@ -984,7 +765,7 @@ void copyTouchpanelReceiveDataBuffer() ///(fp1100))
          touchpanleReceivedDatabuffer[dataBufferCounter] = "#";
      }
 }
-void send_Response_To_Touch(char switch_no, char switch_status, char fan_speed)
+void send_Response_To_Touch(char switch_no, char switch_status)
 {
        __delay_ms(5);
         TX2REG = '(' ;
@@ -995,7 +776,7 @@ void send_Response_To_Touch(char switch_no, char switch_status, char fan_speed)
         __delay_ms(1);
         TX2REG=switch_status;
         __delay_ms(1);
-        TX2REG=fan_speed;
+        TX2REG=0;
         __delay_ms(1);
         TX2REG='0';
         __delay_ms(1);
