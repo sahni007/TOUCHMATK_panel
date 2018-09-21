@@ -1,5 +1,5 @@
 /* 
- * File:   4+1fan_main.c
+ * File:   4_main.c
  * Author: varun sahni
  * client: sunil kamble(shambhu)
  * module: 4 switches (EMRALD)
