@@ -45,15 +45,9 @@
 
 
 
-#define REGULATOR RE3 // regulator
-#define FAN1 RE5//fan1
-#define FAN2 RE4//fan2
-#define FAN3 RE1//fan3
 
-#define REGULATOR_DIR TRISEbits.TRISE3
-#define FAN1_DIR TRISEbits.TRISE5
-#define FAN2_DIR TRISEbits.TRISE4
-#define FAN3_DIR TRISEbits.TRISE1
+
+
 
 #define RELAY1 RF1
 #define RELAY2 RF0
@@ -251,10 +245,7 @@ void main() {
     GPIO_pin_Initialize();
     allPeripheralInit();
     R1=ON;R2=ON;R3=ON;R4=ON;R5=ON;
-    REGULATOR = ON;
-    FAN1 = 0;
-    FAN2 = 0;
-    FAN3 = 0;
+  
 
     RELAY1 = OFF;
     RELAY2 = OFF;
@@ -743,10 +734,7 @@ void GPIO_pin_Initialize() {
     RELAY3_DIR=0;
     RELAY4_DIR=0;
     
-    REGULATOR_DIR=0;
-    FAN1_DIR=0;
-    FAN2_DIR=0;
-    FAN3_DIR=0;
+
     
     UART2_TX_DIR=0;//tx2 ouuput
     UART2_RX_DIR=1;//rx2 input
@@ -873,10 +861,7 @@ void pinINIT_extra(){
 } 
 void clearAllPorts()
 {
-    FAN1=OFF;
-    FAN2=OFF;
-    FAN3=OFF;
-    REGULATOR=OFF;
+ 
     RELAY1=OFF;
     RELAY2=OFF;
     RELAY3=OFF;
