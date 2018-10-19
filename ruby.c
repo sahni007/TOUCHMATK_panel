@@ -5,6 +5,7 @@
  * Created on changed 6 june, 2018, 8:40 PM
  * this is proper working code  for 8 switch for black touch panel
  NOTE: work for master's bed,son's bed, two living , one for dinning and one for entry
+ upadte on 19/10
  */
 
 #include <stdio.h>
